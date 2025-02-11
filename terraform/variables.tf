@@ -18,12 +18,7 @@ variable "proxmox_tls_insecure" {
     default = false
 }
 
-variable "proxmox_storage_iso" {
-  type =  string
-  default = "local"
-}
-
-variable "proxmox_storage_vm" {
+variable "proxmox_storage" {
   type =  string
   default = "local-lvm"
 }
