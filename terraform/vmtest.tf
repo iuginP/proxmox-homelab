@@ -48,14 +48,14 @@ resource "proxmox_vm_qemu" "test_vms" {
     ide {
       ide0 {
         cloudinit {
-          storage = "${var.proxmox_storage}"
+          storage = "${var.proxmox_storage_iso}"
         }
       }
     }
     virtio {
       virtio0 {
         disk {
-          storage = "${var.proxmox_storage}"
+          storage = "${var.proxmox_storage_vm}"
           size = "20G"  # <-- Change the desired disk size, ! since 3.x.x size change will trigger a disk resize
           iothread = true  # <-- (Optional) Enable IOThread for better disk performance in virtio-scsi-single
           replicate = false  # <-- (Optional) Enable for disk replication

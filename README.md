@@ -42,7 +42,7 @@ packer build -var-file='environments/production.pkr.hcl' 'templates/ubuntu-serve
 Next, run the command terraform init. This will initialize a new working directory for use with Terraform. More can be read about this command here.
 
 ```shell
-cd terraform/proxmox
+cd terraform
 terraform init
 ```
 

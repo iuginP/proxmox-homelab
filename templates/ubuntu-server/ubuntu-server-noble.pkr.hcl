@@ -35,7 +35,12 @@ variable "account_password" {
   sensitive = true
 }
 
-variable "proxmox_storage" {
+variable "proxmox_storage_iso" {
+  type =  string
+  default = "local"
+}
+
+variable "proxmox_storage_vm" {
   type =  string
   default = "local-lvm"
 }
@@ -89,7 +94,7 @@ source "proxmox-iso" "ubuntu-server-noble" {
     disks {
         disk_size = "25G"
         format = "raw"
-        storage_pool = "${var.proxmox_storage}"
+        storage_pool = "${var.proxmox_storage_vm}"
         type = "virtio"
     }
 
@@ -108,7 +113,7 @@ source "proxmox-iso" "ubuntu-server-noble" {
 
     # VM Cloud-Init Settings
     cloud_init = true
-    cloud_init_storage_pool = "${var.proxmox_storage}"
+    cloud_init_storage_pool = "${var.proxmox_storage_iso}"
 
     # PACKER Boot Commands
     boot_command = [
