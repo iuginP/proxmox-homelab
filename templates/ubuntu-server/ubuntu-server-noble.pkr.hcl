@@ -125,7 +125,7 @@ source "proxmox-iso" "ubuntu-server-noble" {
     communicator = "ssh"
 
     # PACKER Autoinstall Settings
-    http_directory          = "http"
+    http_directory          = "templates/packer/http"
     # (Optional) Bind IP Address and Port
     # http_bind_address       = "0.0.0.0"
     # http_port_min           = 8802
@@ -168,7 +168,7 @@ build {
 
     # Provisioning the VM Template for Cloud-Init Integration in Proxmox #2
     provisioner "file" {
-        source = "files/99-pve.cfg"
+        source = "templates/packer/files/99-pve.cfg"
         destination = "/tmp/99-pve.cfg"
     }
 
