@@ -1,6 +1,14 @@
 # Ubuntu Server Noble (24.04.x)
 # ---
 # Packer Template to create an Ubuntu Server (Noble 24.04.x) on Proxmox
+packer {
+  required_plugins {
+    name = {
+      version = "~> 1"
+      source  = "github.com/hashicorp/proxmox"
+    }
+  }
+}
 
 # Variable Definitions
 variable "proxmox_api_url" {
@@ -16,8 +24,29 @@ variable "proxmox_api_token_secret" {
     sensitive = true
 }
 
-locals {
-    disk_storage = "local-zfs"
+variable "account_username" {
+  type =  string
+  default = "admin"
+}
+
+variable "account_password" {
+  type =  string
+  default = "password"
+  sensitive = true
+}
+
+variable "proxmox_storage" {
+  type =  string
+  default = "local-lvm"
+}
+
+variable "proxmox_node" {
+  type =  string
+}
+
+variable "proxmox_vm_id" {
+  type =  string
+  default = "100"
 }
 
 # Resource Definiation for the VM Template
@@ -31,8 +60,8 @@ source "proxmox-iso" "ubuntu-server-noble" {
     insecure_skip_tls_verify = true
 
     # VM General Settings
-    node = "pve01"
-    vm_id = "100"
+    node = "${var.proxmox_node}"
+    vm_id = "${var.proxmox_vm_id}"
     vm_name = "ubuntu-server-noble"
     template_description = "Ubuntu Server Noble Image"
 
@@ -60,7 +89,7 @@ source "proxmox-iso" "ubuntu-server-noble" {
     disks {
         disk_size = "25G"
         format = "raw"
-        storage_pool = "${local.disk_storage}"
+        storage_pool = "${var.proxmox_storage}"
         type = "virtio"
     }
 
@@ -79,7 +108,7 @@ source "proxmox-iso" "ubuntu-server-noble" {
 
     # VM Cloud-Init Settings
     cloud_init = true
-    cloud_init_storage_pool = "${local.disk_storage}"
+    cloud_init_storage_pool = "${var.proxmox_storage}"
 
     # PACKER Boot Commands
     boot_command = [
@@ -102,10 +131,10 @@ source "proxmox-iso" "ubuntu-server-noble" {
     # http_port_min           = 8802
     # http_port_max           = 8802
 
-    ssh_username            = "ignadmin"
+    ssh_username            = "${var.account_username}"
 
     # (Option 1) Add your Password here
-    ssh_password        = "ignpassword"
+    ssh_password        = "${var.account_password}"
     # - or -
     # (Option 2) Add your Private SSH KEY file here
     # ssh_private_key_file    = "~/.ssh/id_rsa"
@@ -120,10 +149,6 @@ build {
 
     name = "ubuntu-server-noble"
     sources = ["source.proxmox-iso.ubuntu-server-noble"]
-
-    # Add additional provisioning scripts here
-    # ...
-    # TODO ansible playbook
 
     # Provisioning the VM Template for Cloud-Init Integration in Proxmox #1
     provisioner "shell" {
@@ -151,5 +176,9 @@ build {
     provisioner "shell" {
         inline = [ "sudo cp /tmp/99-pve.cfg /etc/cloud/cloud.cfg.d/99-pve.cfg" ]
     }
+
+    # Add additional provisioning scripts here
+    # ...
+    # TODO ansible playbook
 
 }

@@ -27,7 +27,7 @@ autoinstall:
         lock-passwd: false
         sudo: ALL=(ALL) NOPASSWD:ALL
         shell: /bin/bash
-        passwd: $6$rounds=4096$1JiaRSNzetk6QSMp$jLuTVd5FD0n0zjkzHItx4n1z2rAuANPDTBNleJ6C/Sk/8XU52qH67nf3/C3LFKi3Pg4njVTvEFbE3L2ePYwUN.
+        passwd: $6$rounds=4096$K.jgT4U.aWHhRpC4$zc8dx.9vF6egTZ9ews6m9RhXEdqQMiL2mHbNQk5egTIaEcLlFLjRW3J0qrZ4R0WgiAJRbCjT1EzsIvPSHgaLY/
         # - or -
         # ssh_authorized_keys:
         #   - your-ssh-key
