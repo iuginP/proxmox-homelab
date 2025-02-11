@@ -46,7 +46,7 @@ variable "proxmox_node" {
 
 variable "proxmox_vm_id" {
   type =  string
-  default = "100"
+  default = "200"
 }
 
 # Resource Definiation for the VM Template
