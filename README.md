@@ -1,5 +1,11 @@
 # proxmox-homelab
 
+## References
+
+For building the templates I took huge inspiration from the following projects:
+- https://github.com/vmware-samples/packer-examples-for-vsphere (doc: https://vmware-samples.github.io/packer-examples-for-vsphere/getting-started)
+- https://github.com/ChristianLempa/boilerplates/tree/main/packer/proxmox
+
 ## Workstation Requirements
 
 Install packer: https://developer.hashicorp.com/packer/tutorials/docker-get-started/get-started-install-cli
@@ -29,12 +35,12 @@ sudo apt update && sudo apt install terraform
 Validate the configuration:
 
 ```shell
-packer validate -var-file='environments/production.pkr.hcl' 'templates/ubuntu-server/ubuntu-server-noble.pkr.hcl'
+packer validate -var-file='environments/production.pkr.hcl' 'builds/ubuntu/24-04-LTS/.'
 ```
 
 And then apply it:
 ```shell
-packer build -var-file='environments/production.pkr.hcl' 'templates/ubuntu-server/ubuntu-server-noble.pkr.hcl'
+packer build -var-file='environments/production.pkr.hcl' 'builds/ubuntu/24-04-LTS/.'
 ```
 
 Per sostituire il template già presente utilizzare l'opzione `-force`.

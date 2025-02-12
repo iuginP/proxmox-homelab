@@ -35,12 +35,7 @@ variable "account_password" {
   sensitive = true
 }
 
-variable "proxmox_storage_iso" {
-  type =  string
-  default = "local"
-}
-
-variable "proxmox_storage_vm" {
+variable "proxmox_storage" {
   type =  string
   default = "local-lvm"
 }
@@ -52,6 +47,21 @@ variable "proxmox_node" {
 variable "proxmox_vm_id" {
   type =  string
   default = "200"
+}
+
+locals {
+  data_source_content = {
+    "/meta-data" = file("${abspath(path.root)}/../data/meta-data")
+    "/user-data" = templatefile("${abspath(path.root)}/../data/user-data.pkrtpl.hcl", {
+      build_username           = var.account_username
+      build_password           = var.account_password
+      build_password_encrypted = bcrypt(var.account_password)
+      vm_guest_os_language     = "en_US"
+      vm_guest_os_keyboard     = "us"
+      vm_guest_os_timezone     = "Europe/Rome"
+      additional_packages = []
+    })
+  }
 }
 
 # Resource Definiation for the VM Template
@@ -94,7 +104,7 @@ source "proxmox-iso" "ubuntu-server-noble" {
     disks {
         disk_size = "25G"
         format = "raw"
-        storage_pool = "${var.proxmox_storage_vm}"
+        storage_pool = "${var.proxmox_storage}"
         type = "virtio"
     }
 
@@ -113,7 +123,7 @@ source "proxmox-iso" "ubuntu-server-noble" {
 
     # VM Cloud-Init Settings
     cloud_init = true
-    cloud_init_storage_pool = "${var.proxmox_storage_iso}"
+    cloud_init_storage_pool = "${var.proxmox_storage}"
 
     # PACKER Boot Commands
     boot_command = [
@@ -130,7 +140,7 @@ source "proxmox-iso" "ubuntu-server-noble" {
     communicator = "ssh"
 
     # PACKER Autoinstall Settings
-    http_directory          = "templates/packer/http"
+    http_content          = local.data_source_content
     # (Optional) Bind IP Address and Port
     # http_bind_address       = "0.0.0.0"
     # http_port_min           = 8802
@@ -173,7 +183,7 @@ build {
 
     # Provisioning the VM Template for Cloud-Init Integration in Proxmox #2
     provisioner "file" {
-        source = "templates/packer/files/99-pve.cfg"
+        source = "${abspath(path.root)}/../cloudinit/99-pve.cfg"
         destination = "/tmp/99-pve.cfg"
     }
 

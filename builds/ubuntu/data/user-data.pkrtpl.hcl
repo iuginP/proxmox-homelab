@@ -1,9 +1,9 @@
 #cloud-config
 autoinstall:
   version: 1
-  locale: en_US
+  locale: ${vm_guest_os_language}
   keyboard:
-    layout: us
+    layout: ${vm_guest_os_keyboard}
   ssh:
     install-server: true
     allow-pw: true
@@ -13,6 +13,9 @@ autoinstall:
   packages:
     - qemu-guest-agent
     - sudo
+%{ for package in additional_packages ~}
+    - ${package}
+%{ endfor ~}
   storage:
     layout:
       name: direct
@@ -20,14 +23,11 @@ autoinstall:
       size: 0
   user-data:
     package_upgrade: false
-    timezone: Europe/Rome
+    timezone: ${vm_guest_os_timezone}
     users:
-      - name: ignadmin
+      - name: ${build_username}
         groups: [adm, sudo]
         lock-passwd: false
         sudo: ALL=(ALL) NOPASSWD:ALL
         shell: /bin/bash
-        passwd: $6$rounds=4096$K.jgT4U.aWHhRpC4$zc8dx.9vF6egTZ9ews6m9RhXEdqQMiL2mHbNQk5egTIaEcLlFLjRW3J0qrZ4R0WgiAJRbCjT1EzsIvPSHgaLY/
-        # - or -
-        # ssh_authorized_keys:
-        #   - your-ssh-key
+        passwd: ${build_password_encrypted}
