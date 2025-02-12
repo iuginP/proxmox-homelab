@@ -1,0 +1,15 @@
+proxmox_url = "https://HOSTNAME:8006/"
+proxmox_api_url = "https://HOSTNAME:8006/api2/json"
+proxmox_api_token_id = "root@pam!TOKEN"  # API Token ID
+proxmox_api_token_secret = "SECRET"
+proxmox_tls_insecure = true
+proxmox_admin_username = "root@pam"
+proxmox_admin_password = "SECRET"
+
+proxmox_storage_iso = "local"
+proxmox_storage = "local-lvm"
+proxmox_node = "NODE"
+
+account_username = "admin"
+account_password = "password"
+account_ssh_public = "ssh-rsa xxx DEVICE"

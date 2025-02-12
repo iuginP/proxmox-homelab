@@ -35,12 +35,12 @@ sudo apt update && sudo apt install terraform
 Validate the configuration:
 
 ```shell
-packer validate -var-file='environments/production.pkr.hcl' 'builds/ubuntu/24-04-LTS/.'
+packer validate -var-file='environments/example.tfvars' 'builds/ubuntu/24-04-LTS/.'
 ```
 
 And then apply it:
 ```shell
-packer build -var-file='environments/production.pkr.hcl' 'builds/ubuntu/24-04-LTS/.'
+packer build -var-file='environments/example.tfvars' 'builds/ubuntu/24-04-LTS/.'
 ```
 
 Per sostituire il template già presente utilizzare l'opzione `-force`.
@@ -59,7 +59,7 @@ It is generally a good idea to specify an -out file to save this generated plan 
 
 ```shell
 cd terraform
-terraform plan --var-file='../environments/production.pkr.hcl' -out plan
+terraform plan --var-file='../environments/example.tfvars' -out plan
 ```
 
 After all of your hard work, you are now ready to apply your plan and spin up a VM within your Proxmox server!
