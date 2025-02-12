@@ -59,7 +59,7 @@ It is generally a good idea to specify an -out file to save this generated plan 
 
 ```shell
 cd terraform
-terraform plan --var-file='../environments/production.pkr.hcl -out plan
+terraform plan --var-file='../environments/production.pkr.hcl' -out plan
 ```
 
 After all of your hard work, you are now ready to apply your plan and spin up a VM within your Proxmox server!

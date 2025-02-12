@@ -1,0 +1,1 @@
+https://registry.terraform.io/providers/rancher/rancher2/latest/docs/resources/cluster_v2

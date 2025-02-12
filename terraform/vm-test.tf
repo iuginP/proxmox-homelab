@@ -4,7 +4,7 @@ resource "proxmox_vm_qemu" "test_vms" {
 
   name = "vm-test-${count.index + 1}" # count.index starts at 0
   desc = "description"
-  count = 1 # Establishes how many instances will be created 
+  count = 2 # Establishes how many instances will be created 
   target_node = "${var.proxmox_node}"  # <-- Change to the name of your Proxmox node (if you have multiple nodes)
   agent = 1  # <-- (Optional) Enable QEMU Guest Agent
   tags = "test,ubuntu"
@@ -16,7 +16,7 @@ resource "proxmox_vm_qemu" "test_vms" {
 
   # -- Boot Process
 
-  boot = "cdn"
+  boot = "order=virtio0"
   onboot = true
   # startup = ""  # <-- (Optional) Change startup and shutdown behavior
   # automatic_reboot = false  # <-- Automatically reboot the VM after config change

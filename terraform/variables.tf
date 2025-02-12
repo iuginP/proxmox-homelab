@@ -4,6 +4,14 @@ variable "proxmox_api_url" {
     type = string
 }
 
+variable "proxmox_admin_username" {
+    type = string
+}
+
+variable "proxmox_admin_password" {
+    type = string
+}
+
 variable "proxmox_api_token_id" {
     type = string
 }
@@ -16,6 +24,11 @@ variable "proxmox_api_token_secret" {
 variable "proxmox_tls_insecure" {
     type = bool
     default = false
+}
+
+variable "proxmox_storage_iso" {
+  type =  string
+  default = "local"
 }
 
 variable "proxmox_storage" {
