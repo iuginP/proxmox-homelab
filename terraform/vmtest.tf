@@ -4,7 +4,7 @@ resource "proxmox_vm_qemu" "test_vms" {
 
   name = "vm-test-${count.index + 1}" # count.index starts at 0
   desc = "description"
-  count = 3 # Establishes how many instances will be created 
+  count = 1 # Establishes how many instances will be created 
   target_node = "${var.proxmox_node}"  # <-- Change to the name of your Proxmox node (if you have multiple nodes)
   agent = 1  # <-- (Optional) Enable QEMU Guest Agent
   tags = "test,ubuntu"
@@ -16,14 +16,15 @@ resource "proxmox_vm_qemu" "test_vms" {
 
   # -- Boot Process
 
+  boot = "cdn"
   onboot = true
-  startup = ""  # <-- (Optional) Change startup and shutdown behavior
-  automatic_reboot = false  # <-- Automatically reboot the VM after config change
+  # startup = ""  # <-- (Optional) Change startup and shutdown behavior
+  # automatic_reboot = false  # <-- Automatically reboot the VM after config change
 
   # -- Hardware Settings
 
-  qemu_os = "other"
-  bios = "ovmf"
+  # qemu_os = "other"
+  # bios = "ovmf"
   cores = 2
   sockets = 1
   cpu_type = "host"
@@ -42,7 +43,7 @@ resource "proxmox_vm_qemu" "test_vms" {
 
   # -- Disk Settings
   
-  scsihw = "virtio-scsi-single"  # <-- (Optional) Change the SCSI controller type, since Proxmox 7.3, virtio-scsi-single is the default one         
+  scsihw = "virtio-scsi-pci"  # <-- (Optional) Change the SCSI controller type, since Proxmox 7.3, virtio-scsi-single is the default one         
   
   disks {  # <-- ! changed in 3.x.x
     ide {
@@ -56,8 +57,8 @@ resource "proxmox_vm_qemu" "test_vms" {
       virtio0 {
         disk {
           storage = "${var.proxmox_storage}"
-          size = "20G"  # <-- Change the desired disk size, ! since 3.x.x size change will trigger a disk resize
-          iothread = true  # <-- (Optional) Enable IOThread for better disk performance in virtio-scsi-single
+          size = "40G"  # <-- Change the desired disk size, ! since 3.x.x size change will trigger a disk resize
+          # iothread = true  # <-- (Optional) Enable IOThread for better disk performance in virtio-scsi-single
           replicate = false  # <-- (Optional) Enable for disk replication
         }
       }

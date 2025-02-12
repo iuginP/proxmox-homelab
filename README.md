@@ -37,6 +37,8 @@ And then apply it:
 packer build -var-file='environments/production.pkr.hcl' 'templates/ubuntu-server/ubuntu-server-noble.pkr.hcl'
 ```
 
+Per sostituire il template già presente utilizzare l'opzione `-force`.
+
 ## Creating/updating the infrastructure
 
 Next, run the command terraform init. This will initialize a new working directory for use with Terraform. More can be read about this command here.
