@@ -1,0 +1,16 @@
+http:
+  routers:
+    dashboard:
+      rule: Host(`{{ traefik_hostname }}`) && (PathPrefix(`/`) || PathPrefix(`/api`) || PathPrefix(`/dashboard`))
+      service: api@internal
+      tls: true
+      entrypoints:
+        - websecure
+      middlewares:
+        - traefik-middelware-redirect-root
+
+  middlewares:
+    traefik-middelware-redirect-root:
+      redirectRegex:
+        regex: ^https:\/\/([^\/]+)\/?$
+        replacement: https://${1}/dashboard/

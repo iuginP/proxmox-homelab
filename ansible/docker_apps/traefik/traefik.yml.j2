@@ -1,0 +1,99 @@
+global:
+  # Send anonymous usage data
+  sendAnonymousUsage: false
+
+log:
+  level: {{ traefik_log_level }}
+
+serversTransport:
+  insecureSkipVerify: true
+
+api:
+  dashboard: {{ traefik_dashboard | lower }}
+
+entryPoints:
+{% for entrypoint in traefik_entrypoints %}
+  {{ entrypoint.name }}:
+    address: ":{{ entrypoint.port }}"
+{% if entrypoint.redirect is defined %}
+    http:
+      redirections:
+        entryPoint:
+          to: {{ entrypoint.redirect }}
+          scheme: https
+          permanent: true
+{% endif %}
+{% endfor %}
+
+providers:
+  file:
+    directory: "/etc/traefik/conf.d"
+    watch: true
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+    network: traefik_proxy
+
+tls:
+{% if traefik_certificates is defined and traefik_certificates|length > 0 %}
+  # Use existing self-signed certificates
+  certificates:
+{% for certificate in traefik_certificates %}
+    - certFile: "{{ certificate.cert }}"
+      keyFile: "{{ certificate.key }}"
+{% endfor %}
+{% endif %}
+  options:
+    default:
+      minVersion: VersionTLS12
+    mintls13:
+      minVersion: VersionTLS13
+{% if traefik_client_auth is defined %}
+{% for client_auth in traefik_client_auth %}
+    # mTLS configuration for {{ client_auth.name }}
+    {{ client_auth.name }}:
+      clientAuth:
+        # in PEM format. each file can contain multiple CAs.
+        caFiles:
+{% for ca_file in client_auth.ca_files %}
+          - {{ ca_file }}
+{% endfor %}
+        clientAuthType: {{ client_auth.auth_type }}
+{% endfor %}
+{% endif %}
+
+{% if traefik_certificates_resolvers is defined and traefik_certificates_resolvers|length > 0 %}
+certificatesResolvers:
+{% for resolver_name, resolver_conf in traefik_certificates_resolvers.items() %}
+  {{ resolver_name }}:
+    acme:
+      email: "{{ resolver_conf.email }}"
+      caServer: "{{ resolver_conf.ca_server }}"
+      storage: "/etc/traefik/acme.json"
+{% if resolver_conf.http_challenge is defined %}
+      # Use a HTTP-01 ACME challenge.
+      httpChallenge:
+        # EntryPoint to use for the HTTP-01 challenges.
+        entryPoint: "{{ resolver_conf.http_challenge.entrypoint }}"
+{% endif %}
+{% if resolver_conf.dns_challenge is defined %}
+      # Use a DNS-01 ACME challenge rather than HTTP-01 challenge.
+      # Note: mandatory for wildcard certificate generation.
+      dnsChallenge:
+        # DNS provider used.
+        provider: "{{ resolver_conf.dns_challenge.provider }}"
+        # By default, the provider will verify the TXT DNS challenge record before letting ACME verify.
+        # If delayBeforeCheck is greater than zero, this check is delayed for the configured duration in seconds.
+        # Useful if internal networks block external DNS queries.
+        delayBeforeCheck: {{ resolver_conf.dns_challenge.delayBeforeCheck | default(0) }}
+        # Use following DNS servers to resolve the FQDN authority. Example:
+        # - "1.1.1.1:53"
+        # - "8.8.8.8:53"
+        resolvers: {{ resolver_conf.dns_challenge.resolvers | default([]) }}
+
+        # Disable the DNS propagation checks before notifying ACME that the DNS challenge is ready.
+        # NOT RECOMMENDED: Increase the risk of reaching Let's Encrypt's rate limits.
+        disablePropagationCheck: "{{ resolver_conf.dns_challenge.disablePropagationCheck | default('false') }}"
+{% endif %}
+{% endfor %}
+{% endif %}

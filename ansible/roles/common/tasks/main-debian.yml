@@ -1,0 +1,31 @@
+---
+# Configure host
+- name: Set timezone
+  timezone:
+    name: "{{ timezone }}"
+
+# Cleanup system
+- name: Remove snapd package
+  ansible.builtin.apt:
+    name: snapd
+    state: absent
+    purge: true
+
+- name: Remove snapd cache
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /var/cache/snapd/
+    - /root/snap/
+
+# Update packages
+- name: Update APT cache daily and upgrade packages
+  ansible.builtin.apt:
+    upgrade: "{{ apt.upgrade_packages | ternary('dist', 'no') }}"
+    update_cache: true
+    cache_valid_time: 86400   # One day
+
+- name: Install basic software
+  ansible.builtin.apt:
+    name: "{{ apt.basic_software }}"

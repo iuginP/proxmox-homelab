@@ -1,0 +1,98 @@
+---
+# Create the directory tree
+- name: Create configuration directory [1/4 - base path]
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: directory
+    owner: "{{ item.owner | default(ansible_user) }}"
+    group: "{{ item.group | default(ansible_user) }}"
+    mode: "{{ item.mode | default('0750') }}"
+  loop:
+    - path: "{{ docker_app_path }}"
+
+- name: Create configuration directory [2/4 - additional path]
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: directory
+    owner: "{{ item.owner | default(ansible_user) }}"
+    group: "{{ item.group | default(ansible_user) }}"
+    mode: "{{ item.mode | default('0750') }}"
+  loop: "{{ docker_app_additional_paths }}"
+
+- name: Create configuration directory [3/4 - template app structure]
+  ansible.builtin.file:
+    path: "{{ docker_app_path }}/{{ item.path }}"
+    state: directory
+    owner: "{{ item.uid }}"
+    group: "{{ item.gid }}"
+    mode: '{{ item.mode }}'
+  with_community.general.filetree: "{{ playbook_dir }}/{{ docker_apps_relative_path }}/{{ docker_app }}"
+  when: item.state == 'directory'
+
+- name: Create configuration directory [4/4 - template files structure]
+  ansible.builtin.file:
+    path: "{{ docker_app_path }}/{{ item.path }}"
+    state: directory
+    owner: "{{ item.uid }}"
+    group: "{{ item.gid }}"
+    mode: '{{ item.mode }}'
+  with_community.general.filetree: "{{ playbook_dir }}/{{ docker_files_relative_path }}/{{ docker_app }}"
+  when: item.state == 'directory'
+
+# Upload template app
+- name: Upload teamplate files [1/2 - app files]
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ docker_app_path }}/{{ item.path | splitext | first }}"
+    owner: "{{ item.uid }}"
+    group: "{{ item.gid }}"
+    mode: "{{ item.mode }}"
+  with_community.general.filetree: "{{ playbook_dir }}/{{ docker_apps_relative_path }}/{{ docker_app }}"
+  when: (item.state == "file") and (item.src is match(".*\.j2$"))
+  notify: recreate docker
+
+- name: Upload teamplate files [2/2 - config files]
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ docker_app_path }}/{{ item.path | splitext | first }}"
+    owner: "{{ item.uid }}"
+    group: "{{ item.gid }}"
+    mode: "{{ item.mode }}"
+  with_community.general.filetree: "{{ playbook_dir }}/{{ docker_files_relative_path }}/{{ docker_app }}"
+  when: (item.state == "file") and (item.src is match(".*\.j2$"))
+  notify: recreate docker
+
+# Copy app files
+- name: Copy app files - [1/2 - app files]
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ docker_app_path }}/{{ item.path }}"
+    owner: "{{ item.uid }}"
+    group: "{{ item.gid }}"
+    mode: "{{ item.mode }}"
+  with_community.general.filetree: "{{ playbook_dir }}/{{ docker_apps_relative_path }}/{{ docker_app }}"
+  when: (item.state == "file") and (item.src is not match(".*\.j2$"))
+  notify: recreate docker
+
+- name: Copy app files - [2/2 - config files]
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ docker_app_path }}/{{ item.path }}"
+    owner: "{{ item.uid }}"
+    group: "{{ item.gid }}"
+    mode: "{{ item.mode }}"
+  with_community.general.filetree: "{{ playbook_dir }}/{{ docker_files_relative_path }}/{{ docker_app }}"
+  when: (item.state == "file") and (item.src is not match(".*\.j2$"))
+  notify: recreate docker
+
+# Execute all the actions of the handlers that have been notified.
+# It allows the container to restart or build itself before ensuring that
+# it is actually running. We need to ensure it is running in case you
+# run the task after nothing has been changed but the container was stopped.
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
+
+- name: Ensure the compose is running, eventually build it
+  community.docker.docker_compose_v2:
+    project_src: "{{ docker_app_path }}"
+    build: policy

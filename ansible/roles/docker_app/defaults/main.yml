@@ -1,0 +1,16 @@
+---
+docker_apps_relative_path: "docker_apps"
+docker_files_relative_path: "docker_files"
+
+docker_app_path: "/opt/{{ docker_app }}"
+docker_app_additional_paths: []
+
+# Examples:
+# docker_app: traefik
+# docker_app_additional_paths:
+#   - path: "/this/path"
+#     owner: "{{ ansible_user }}"
+#     group: "{{ ansible_user }}"
+#     mode: '0750'
+
+# TODO import defaults from relative folder

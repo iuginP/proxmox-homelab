@@ -1,0 +1,32 @@
+version: "3"
+
+services:
+
+  # More info at https://doc.traefik.io/traefik/user-guides/docker-compose/basic-example/
+  traefik:
+    restart: unless-stopped
+    image: "{{ traefik_image }}"
+    ports:
+{% for entrypoint in traefik_entrypoints %}
+      - "{{ entrypoint.port }}:{{ entrypoint.port }}"
+{% endfor %}
+    dns:
+      - 1.1.1.3
+      - 1.0.0.3
+    # Allow traefik to connect to all the container exposed on the following bridge network
+    networks:
+      - proxy
+{% if traefik_certificates_resolvers.letsencrypt.dns_challenge is defined %}
+    environment:
+{% for apikey in traefik_certificates_resolvers.letsencrypt.dns_challenge.api_keys %}
+      - "{{ apikey.name }}={{ apikey.value }}"
+{% endfor %}
+{% endif %}
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "{{ traefik_path }}/traefik.yml:/traefik.yml:ro"
+      - "{{ traefik_path }}/conf.d/:/etc/traefik/conf.d/"
+
+networks:
+  proxy:
+    driver: bridge

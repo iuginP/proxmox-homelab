@@ -1,0 +1,8 @@
+---
+- name: Include Linux tasks
+  ansible.builtin.include_tasks: main-debian.yml
+  when: ansible_os_family == "Debian"
+
+- name: Include Windows tasks
+  ansible.builtin.include_tasks: main-windows.yml
+  when: ansible_os_family == "Windows"

@@ -1,0 +1,36 @@
+---
+# Cleanup toolbar
+- name: Customize user toolbar - Disable news and Interests
+  ansible.windows.win_regedit:
+    path: HKCU:\Software\Microsoft\Windows\CurrentVersion\Feeds
+    name: ShellFeedsTaskbarViewMode
+    data: 2
+    type: dword
+
+- name: Customize user toolbar - Disable Cortana button
+  ansible.windows.win_regedit:
+    path: HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced
+    name: ShowCortanaButton
+    data: 0
+    type: dword
+
+- name: Customize user toolbar - Disable Task View button
+  ansible.windows.win_regedit:
+    path: HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced
+    name: ShowTaskViewButton
+    data: 0
+    type: dword
+
+- name: Customize user toolbar - Search show Cortana button
+  ansible.windows.win_regedit:
+    path: HKCU:\Software\Microsoft\Windows\CurrentVersion\Search
+    name: SearchboxTaskbarMode
+    data: 1
+    type: dword
+
+- name: Customize user toolbar - Show all tray icons
+  ansible.windows.win_regedit:
+    path: HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer
+    name: EnableAutoTray
+    data: 0
+    type: dword

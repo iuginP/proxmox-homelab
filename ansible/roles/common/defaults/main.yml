@@ -1,0 +1,13 @@
+---
+timezone: Europe/Rome
+apt:
+  upgrade_packages: true
+  basic_software:
+    - jq
+    - tree
+    - vim
+    - htop
+    - curl
+    - apt-transport-https
+    - lsb-release
+    - resolvconf
