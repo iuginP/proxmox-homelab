@@ -1,0 +1,32 @@
+---
+- name: Provision Cyberloop linux machines
+  hosts: all
+  become: true
+  tags:
+    - common
+  roles:
+    - common
+    - docker
+
+# Traefik basic deploy
+- name: Provision traefik
+  hosts: traefik
+  become: true
+  tags:
+    - traefik
+  roles:
+    - role: docker_app
+      vars:
+        docker_app: traefik
+
+# # Provision the service "EXAMPLE" of which the configuration files are in the folder "files/EXAMPLE"
+# - name: Provision service EXAMPLE
+#   hosts: SRV01
+#   roles:
+#     - role: docker_app
+#       vars:
+#         docker_app: EXAMPLE
+#         # EXAMPLE_domain: example.{{ base_domain }}
+#         # docker_app_additional_paths:
+#         #   - path: "{{ docker_app_path }}/volumes/data"
+#       
