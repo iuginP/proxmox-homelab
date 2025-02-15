@@ -1,0 +1,18 @@
+plugin: community.general.proxmox
+url: "{{ lookup('ansible.builtin.env', 'proxmox_url') }}"
+user: "{{ lookup('ansible.builtin.env', 'proxmox_admin_username') }}"
+password: "{{ lookup('ansible.builtin.env', 'proxmox_admin_password') }}"
+validate_certs: "{{ not lookup('ansible.builtin.env', 'proxmox_tls_insecure') }}"
+
+want_facts: true
+exclude_nodes: true
+keyed_groups:
+    # proxmox_tags_parsed is only returned when 'want_facts=true'
+  - key: proxmox_tags_parsed
+    separator: ""
+    prefix: group
+groups:
+  linux: "'ubuntu' in (proxmox_tags_parsed|list)"
+  test: "'test' in (proxmox_tags_parsed|list)"
+filters:
+  - proxmox_name | regex_search('^prod-')

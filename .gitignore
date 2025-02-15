@@ -36,3 +36,6 @@ plan
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+
+# Production Environment
+environments/production

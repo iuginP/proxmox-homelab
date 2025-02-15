@@ -1,0 +1,30 @@
+all:
+  children:
+
+    linux:
+      hosts:
+      vars:
+        # Ansible global vars
+        ansible_connection: ssh
+        ansible_port: '22'
+        ansible_ssh_common_args: -o UserKnownHostsFile=/dev/null -o ControlMaster=auto
+          -o ControlPersist=60s -o ForwardX11=no -o LogLevel=ERROR -o IdentitiesOnly=yes
+          -o StrictHostKeyChecking=no
+
+        ansible_user: "{{ lookup('ansible.builtin.env', 'account_username') }}"
+        ansible_ssh_private_key_file: "~/.ssh/id_rsa"
+        ansible_host: "{{ proxmox_ipconfig0.ip.split('/')[0] }}"
+
+    windows:
+      hosts:
+      vars:
+        # Ansible
+        ansible_connection: winrm
+        ansible_port: 5986
+        ansible_winrm_transport: basic
+        ansible_winrm_server_cert_validation: ignore
+        ansible_become_user: SYSTEM
+        ansible_become_method: runas
+
+  vars:
+    base_domain: "{{ inventory_hostname }}"
