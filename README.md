@@ -70,3 +70,9 @@ Assuming things run successfully, you should see the following output: `Apply co
 ```shell
 terraform apply plan
 ```
+
+## Ansible temporary instructions
+
+```shell
+python3 -m pip install -r requirements.txt --break-system-packages
+```
