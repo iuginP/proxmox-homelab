@@ -30,6 +30,12 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashi
 sudo apt update && sudo apt install terraform
 ```
 
+Install Ansible requirements:
+
+```shell
+python3 -m pip install -r requirements.txt --break-system-packages
+```
+
 ## Creating/updating the templates
 
 Validate the configuration:
@@ -73,6 +79,8 @@ terraform apply plan
 
 ## Ansible temporary instructions
 
+To minimize repetition of credentials and configurations, we try to reuse the same configuration files. The following command load the Proxmox credentials from the tfvars configuration file.
+
 ```shell
-python3 -m pip install -r requirements.txt --break-system-packages
+export $(grep -v " " "../environments/example/example.tfvars" | xargs) && ansible-inventory -i ../environments/example/ansible --list
 ```
