@@ -41,12 +41,12 @@ python3 -m pip install -r requirements.txt --break-system-packages
 Validate the configuration:
 
 ```shell
-packer validate -var-file='environments/example.tfvars' 'builds/ubuntu/24-04-LTS/.'
+packer validate -var-file='environments/example.pkr.hcl' 'builds/ubuntu/24-04-LTS/.'
 ```
 
 And then apply it:
 ```shell
-packer build -var-file='environments/example.tfvars' 'builds/ubuntu/24-04-LTS/.'
+packer build -var-file='environments/example.pkr.hcl' 'builds/ubuntu/24-04-LTS/.'
 ```
 
 Per sostituire il template già presente utilizzare l'opzione `-force`.
@@ -65,7 +65,7 @@ It is generally a good idea to specify an -out file to save this generated plan 
 
 ```shell
 cd terraform
-terraform plan --var-file='../environments/example.tfvars' -out plan
+terraform plan --var-file='../environments/example.pkr.hcl' -out plan
 ```
 
 After all of your hard work, you are now ready to apply your plan and spin up a VM within your Proxmox server!
@@ -82,5 +82,5 @@ terraform apply plan
 To minimize repetition of credentials and configurations, we try to reuse the same configuration files. The following command load the Proxmox credentials from the tfvars configuration file.
 
 ```shell
-export $(grep -v " " "../environments/example/example.tfvars" | xargs) && ansible-inventory -i ../environments/example/ansible --list
+export $(grep -v " " "../environments/example/example.pkr.hcl" | xargs) && ansible-inventory -i ../environments/example/ansible --list
 ```

@@ -65,7 +65,7 @@ locals {
 }
 
 # Resource Definiation for the VM Template
-source "proxmox-iso" "ubuntu-server-noble" {
+source "proxmox-iso" "ubuntu-server-24-04-cloud-init" {
 
     # Proxmox Connection Settings
     proxmox_url = "${var.proxmox_api_url}"
@@ -77,7 +77,7 @@ source "proxmox-iso" "ubuntu-server-noble" {
     # VM General Settings
     node = "${var.proxmox_node}"
     vm_id = "${var.proxmox_vm_id}"
-    vm_name = "ubuntu-server-noble"
+    vm_name = "ubuntu-server-24-04-cloud-init"
     template_description = "Ubuntu Server Noble Image"
 
     # VM OS Settings
@@ -135,6 +135,8 @@ source "proxmox-iso" "ubuntu-server-noble" {
         "<f10><wait>"
     ]
 
+    boot_key_interval = "150ms"   # type slowly!  seems to guarantee more reliable builds even with non-boot_command steps?
+
     boot = "c"
     boot_wait = "10s"
     communicator = "ssh"
@@ -142,7 +144,7 @@ source "proxmox-iso" "ubuntu-server-noble" {
     # PACKER Autoinstall Settings
     http_content          = local.data_source_content
     # (Optional) Bind IP Address and Port
-    # http_bind_address       = "0.0.0.0"
+    http_bind_address       = "0.0.0.0"
     # http_port_min           = 8802
     # http_port_max           = 8802
 
@@ -162,8 +164,8 @@ source "proxmox-iso" "ubuntu-server-noble" {
 # Build Definition to create the VM Template
 build {
 
-    name = "ubuntu-server-noble"
-    sources = ["source.proxmox-iso.ubuntu-server-noble"]
+    name = "ubuntu-server-24-04-cloud-init"
+    sources = ["source.proxmox-iso.ubuntu-server-24-04-cloud-init"]
 
     # Provisioning the VM Template for Cloud-Init Integration in Proxmox #1
     provisioner "shell" {

@@ -11,7 +11,7 @@ resource "proxmox_vm_qemu" "test_vms" {
 
   # -- Template settings
 
-  clone = "ubuntu-server-noble"  # <-- Change to the name of the template or VM you want to clone
+  clone = "ubuntu-server-24-04-cloud-init"  # <-- Change to the name of the template or VM you want to clone
   full_clone = true  # <-- (Optional) Set to "false" to create a linked clone
 
   # -- Boot Process
