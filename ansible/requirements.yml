@@ -1,0 +1,9 @@
+---
+# ansible-galaxy requirements
+# install them using the command `ansible-galaxy install -r requirements.yml`
+collections:
+  - name: community.general
+  - name: community.docker
+
+roles:
+  - name: lablabs.rke2
