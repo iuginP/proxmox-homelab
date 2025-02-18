@@ -2,39 +2,7 @@
 # `ansible-galaxy role install lablabs.rke2`
 
 - name: Deploy RKE2
-  hosts: all
+  hosts: rke2-cluster
   become: true
-  vars:
-    rke2_ha_mode: true
-    rke2_cluster_domain: cluster02.iugin.ovh
-    rke2_api_ip: 192.168.15.230
-    rke2_api_cidr: 24
-    rke2_interface: eth0
-    rke2_download_kubeconf: false
-    rke2_server_node_taints:
-      # - 'CriticalAddonsOnly=true:NoExecute'
-    rke2_token: pA4fY8G1seEuF9XgoBtP6LEvgKDdmmlM
-    rke2_version: v1.25.3+rke2r1
-    # rke2_disable:
-    #   - rke2-ingress-nginx
-    # Default Ansible Inventory Group name for RKE2 Servers
-    rke2_servers_group_name: rke2-master
-    # Default Ansible Inventory Group name for RKE2 Agents
-    rke2_agents_group_name: rke2-worker
   roles:
      - role: lablabs.rke2
-
-
-# [masters]
-# master-01 ansible_host=192.168.123.1
-# master-02 ansible_host=192.168.123.2
-# master-03 ansible_host=192.168.123.3
-
-# [workers]
-# worker-01 ansible_host=192.168.123.11
-# worker-02 ansible_host=192.168.123.12
-# worker-03 ansible_host=192.168.123.13
-
-# [k8s_cluster:children]
-# masters
-# workers
