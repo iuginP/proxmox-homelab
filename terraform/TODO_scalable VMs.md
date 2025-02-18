@@ -1,1 +1,0 @@
-https://codingpackets.com/blog/proxmox-cloud-init-with-terraform-and-saltstack/
