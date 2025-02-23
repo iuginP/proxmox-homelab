@@ -67,8 +67,8 @@ resource "proxmox_vm_qemu" "test_vms" {
 
   # -- Cloud Init Settings
 
-  ipconfig0 = "ip=192.168.15.${count.index + 70}/24,gw=192.168.15.1"  # <-- Change to your desired IP configuration
-  nameserver = "192.168.15.1"  # <-- Change to your desired DNS server
+  ipconfig0 = "ip=172.16.100.${count.index + 70}/24,gw=172.16.100.1"  # <-- Change to your desired IP configuration
+  nameserver = "172.16.100.1"  # <-- Change to your desired DNS server
   ciuser = "${var.account_username}"
   sshkeys = "${var.account_ssh_public}"  # <-- (Optional) Change to your public SSH key
 }

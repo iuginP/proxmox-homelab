@@ -40,5 +40,6 @@ plan
 .terraformrc
 terraform.rc
 
-# Production Environment
-environments/production
+# Production/Development Environments
+environments/prod*
+environments/dev*

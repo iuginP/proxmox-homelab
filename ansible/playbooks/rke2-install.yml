@@ -1,8 +1,0 @@
-# It requires the galaxy role:
-# `ansible-galaxy role install lablabs.rke2`
-
-- name: Deploy RKE2
-  hosts: rke2-cluster
-  become: true
-  roles:
-     - role: lablabs.rke2

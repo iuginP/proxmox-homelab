@@ -8,6 +8,16 @@
     - common
     - docker
 
+# It requires the galaxy role:
+# `ansible-galaxy role install lablabs.rke2`
+- name: Deploy RKE2
+  hosts: rke2_cluster
+  become: true
+  tags:
+    - kubernetes
+  roles:
+     - role: lablabs.rke2
+
 # Traefik basic deploy
 - name: Provision traefik
   hosts: traefik

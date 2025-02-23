@@ -1,8 +1,10 @@
 plugin: community.general.proxmox
 url: "{{ lookup('ansible.builtin.env', 'proxmox_url') }}"
 user: "{{ lookup('ansible.builtin.env', 'proxmox_admin_username') }}"
-password: "{{ lookup('ansible.builtin.env', 'proxmox_admin_password') }}"
+# password: "{{ lookup('ansible.builtin.env', 'proxmox_admin_password') }}"
 validate_certs: "{{ not lookup('ansible.builtin.env', 'proxmox_tls_insecure') }}"
+token_id: "{{ lookup('ansible.builtin.env', 'proxmox_api_token_id_short') }}"
+token_secret: "{{ lookup('ansible.builtin.env', 'proxmox_api_token_secret') }}"
 
 want_facts: true
 exclude_nodes: true
